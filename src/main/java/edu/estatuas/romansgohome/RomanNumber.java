@@ -1,5 +1,9 @@
 package edu.estatuas.romansgohome;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RomanNumber {
     private final String roman;
 
@@ -14,20 +18,34 @@ public class RomanNumber {
     public int toDecimal(){
         String romanClean = cleanJunk();
         int decimal = 0;
-        String[] romanSplit = romanClean.split("(CM)*(CD)*(XC)*(XL)*(IX)*(IV)*");
+        Pattern pattern = Pattern.compile("(CM)*(CD)*(XC)*(XL)*(IX)*(IV)*");
+        Matcher matcher = pattern.matcher(romanClean);
 
-        // https://stackoverflow.com/questions/4662215/how-to-extract-a-substring-using-regex
+        ArrayList<String> restas = new ArrayList<>();
+        while (matcher.find()) {
+            if (!matcher.group().equals("")) {
+                restas.add(matcher.group());
+            }
+        }
 
-        for(String operation : romanSplit){
-            {
-                try{
-                    decimal += (RomanSymbols.valueOf(operation).getValue());
-                } catch (IllegalArgumentException noResta) {
+        String positivos = romanClean.substring(0, romanClean.length());
+        StringBuilder negativos = new StringBuilder();
+        if (!restas.isEmpty()) {
+            for (String resta : restas) {
+                positivos = positivos.replace(resta, "");
+                negativos.append(resta);
+            }
 
-                    for(String numero : operation.split("")){
-                        decimal += (RomanSymbols.valueOf(numero).getValue());
-                    }
-                }
+            boolean restando = true;
+            for (String numero : negativos.toString().split("")){
+                decimal += (!restando) ?  (RomanSymbols.valueOf(numero).getValue()) : -(RomanSymbols.valueOf(numero).getValue());
+                restando = !restando;
+            }
+        }
+
+        if (!positivos.isEmpty()) {
+            for (String numero : positivos.split("")) {
+                decimal += (RomanSymbols.valueOf(numero).getValue());
             }
         }
 
