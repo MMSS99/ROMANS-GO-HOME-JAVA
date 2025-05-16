@@ -23,12 +23,12 @@ public class RomanNumber {
 
         ArrayList<String> restas = new ArrayList<>();
         while (matcher.find()) {
-            if (!matcher.group().equals("")) {
+            if (!matcher.group().isEmpty()) {
                 restas.add(matcher.group());
             }
         }
 
-        String positivos = romanClean.substring(0, romanClean.length());
+        String positivos = romanClean;
         StringBuilder negativos = new StringBuilder();
         if (!restas.isEmpty()) {
             for (String resta : restas) {
